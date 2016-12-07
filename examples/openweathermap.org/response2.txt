@@ -1,0 +1,42 @@
+{
+  "coord": {
+    "lon": 37.52,
+    "lat": 55.67
+  },
+  "weather": [
+    {
+      "id": 622,
+      "main": "Snow",
+      "description": "heavy shower snow",
+      "icon": "13n"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": -5.99,
+    "pressure": 1003,
+    "humidity": 92,
+    "temp_min": -7,
+    "temp_max": -5
+  },
+  "visibility": 900,
+  "wind": {
+    "speed": 7,
+    "deg": 290
+  },
+  "clouds": {
+    "all": 75
+  },
+  "dt": 1478880000,
+  "sys": {
+    "type": 1,
+    "id": 7329,
+    "message": 0.0025,
+    "country": "RU",
+    "sunrise": 1478840319,
+    "sunset": 1478870924
+  },
+  "id": 565912,
+  "name": "Dmitrovskiy",
+  "cod": 200
+}

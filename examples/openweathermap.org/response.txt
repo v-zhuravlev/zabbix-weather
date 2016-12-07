@@ -1,0 +1,41 @@
+{
+  "coord": {
+    "lon": 56.08,
+    "lat": 59.09
+  },
+  "weather": [
+    {
+      "id": 803,
+      "main": "Clouds",
+      "description": "broken clouds",
+      "icon": "04n"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": -11.67,
+    "pressure": 1017.33,
+    "humidity": 72,
+    "temp_min": -11.67,
+    "temp_max": -11.67,
+    "sea_level": 1037.26,
+    "grnd_level": 1017.33
+  },
+  "wind": {
+    "speed": 1.72,
+    "deg": 41.5002
+  },
+  "clouds": {
+    "all": 64
+  },
+  "dt": 1478882360,
+  "sys": {
+    "message": 0.2637,
+    "country": "RU",
+    "sunrise": 1478836843,
+    "sunset": 1478865485
+  },
+  "id": 505665,
+  "name": "Pozhva",
+  "cod": 200
+}
