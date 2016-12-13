@@ -6,6 +6,7 @@ Collect weather conditions from openweathermap.org or weather.yandex.ru using ho
 ### openweathermap  
 http://openweathermap.org/appid  
 ### yandex weather 
+https://tech.yandex.ru/weather/  
 This is currently commercial service only, key is requested by email.  
 
 
@@ -37,11 +38,12 @@ You should receive `OK` as script output.
 add another global macro as prefered language for weather descriptions:  
 `{$WEATHER_LANG} = en`  
 
-4. Import example template  (or create own)  
+4. Import example template  (or create own):  
 Currently supported items:  
-|Item|Key|openweathermap|yandex|  
-|---|---|----|----|  
-|Temperature|temp|Y|Y|  
+
+| Item       |       key |        OWM |     Yandex |  
+|------------|-----------|------------|------------|  
+| Temperature | temp | Y | Y |  
 |Humidity|humidity|Y|Y|  
 |Visibility|visibility|Y|Y|  
 |Is dark|is_dark|Y|Y|  
