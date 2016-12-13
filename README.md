@@ -34,6 +34,7 @@ You should receive `OK` as script output.
 
 3.	Add global Macro
 `{$WEATHER_APIKEY} = YOURKEY`  
-![image](https://cloud.githubusercontent.com/assets/14870891/21132407/e39be89c-c124-11e6-9d35-296ba63fe79f.png)
+![image](https://cloud.githubusercontent.com/assets/14870891/21132462/354687f6-c125-11e6-9995-256aac0ebd89.png)
+
 
 4. Import example template  (or create own)  
