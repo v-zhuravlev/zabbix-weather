@@ -1,5 +1,5 @@
 # zabbix-weather
-Collect weather conditions from openweathermap.org or weather.yandex.ru using host coordinates
+Collect weather conditions from openweathermap.org or weather.yandex.ru using host coordinates.  
 
 
 ## Get key  
@@ -11,7 +11,6 @@ This is currently commercial service only, key is requested by email.
 
 
 ##Dependencies  
-
 The script is written in Perl and you will need common modules in order to run it:  
 ```
 LWP
@@ -35,9 +34,32 @@ You should receive `OK` as script output.
 3.	Add global Macro
 `{$WEATHER_APIKEY} = YOURKEY`  
 ![image](https://cloud.githubusercontent.com/assets/14870891/21132462/354687f6-c125-11e6-9995-256aac0ebd89.png)
-
+add another global macro as prefered language for weather descriptions:  
+`{$WEATHER_LANG} = en`  
 
 4. Import example template  (or create own)  
+Currently supported items:  
+|Item|Key|openweathermap|yandex|  
+|---|---|----|----|  
+|Temperature|temp|Y|Y|  
+|Humidity|humidity|Y|Y|  
+|Visibility|visibility|Y|Y|  
+|Is dark|is_dark|Y|Y|  
+|Wind speed|wind.speed|Y|Y|  
+|Weather status|weather|Y|Y|  
+|Weather description|weather.description|Y| |  
+|Weather condition id |weather.condition.id|Y| |  
+
+5. Setup host  
+Add macros {$LAT} and {$LON} for each host that require weather monitoring:  
+![image](https://cloud.githubusercontent.com/assets/14870891/21159303/c87f61a2-c191-11e6-8f49-638d877b06a6.png)
+
+And that is it:  
+![screencapture--1481663617632](https://cloud.githubusercontent.com/assets/14870891/21159567/c8e270de-c192-11e6-9452-cf1ed5251f60.png)
+
+
+Note: It would more logical to use Latitue and Longitude Inventory fields and not user macros, but {INVENTORY.*} values cannot be used in items keys.  
+A feature request to change that is here: https://support.zabbix.com/browse/ZBXNEXT-2546.
 
 
 # TODO  
