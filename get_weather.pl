@@ -25,7 +25,7 @@ use constant {
 my $api_key = '';
 
 my $lat;# = '59.3969625';
-my $lon;# = '55.672944';
+my $lon;# = '55.272944';
 my $debug=0;
 #zabbix server
 my $zabbixserver = '127.0.0.1';
