@@ -38,3 +38,7 @@ You should receive `OK` as script output.
 
 
 4. Import example template  (or create own)  
+
+
+# TODO  
+- Add error handling for zabbix_send  
