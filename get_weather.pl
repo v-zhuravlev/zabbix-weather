@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-my $VERSION = 0.01;
+my $VERSION = 0.02;
 use strict;
 use warnings; 
 
@@ -22,15 +22,15 @@ use constant {
 };
 
 
-my $api_key = 'key_here';
+my $api_key = '';
 
 my $lat;# = '59.3969625';
 my $lon;# = '55.672944';
 my $debug=0;
 #zabbix server
 my $zabbixserver = '127.0.0.1';
-my $hostname;#     = "CCK_LOCAL";
-my $lang = 'ru';
+my $hostname;#    
+my $lang = 'en';
 
 GetOptions(
     "api_key=s" =>  \$api_key,
@@ -86,7 +86,9 @@ sub openweather {
     $td->{'wind.speed'} = $resp->{wind}->{speed};
 
     $td->{'weather'} = $resp ->{weather}->[0]->{main};
+    $td->{'weather.condition.id'} = $resp ->{weather}->[0]->{id};
     $td->{'weather.description'} = $resp ->{weather}->[0]->{description};
+
 
     foreach my $key (keys %{ $td }) {
         print $key." " if $debug;
