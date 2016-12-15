@@ -32,6 +32,16 @@ then:
 `./get_weather.pl -lat 55.672944 -lon 38.478944 --hostname TEST --api_key YOURKEY`  
 You should receive `OK` as script output.  
 
+2.1. If you need to use http proxy:  
+Make sure that you have environment variables `http_proxy` and `https_proxy` defined under user `zabbix`  
+For example:  
+```
+export http_proxy=http://proxy_ip:3129/
+export https_proxy=$http_proxy  
+./get_weather.pl -lat 55.672944 -lon 38.478944 --hostname TEST --api_key YOURKEY  
+```
+
+
 3.	Add global Macro
 `{$WEATHER_APIKEY} = YOURKEY`  
 ![image](https://cloud.githubusercontent.com/assets/14870891/21132462/354687f6-c125-11e6-9995-256aac0ebd89.png)

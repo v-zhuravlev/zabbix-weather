@@ -147,6 +147,7 @@ sub get_with_retries {
     my $response;
     my $ua = LWP::UserAgent->new( );
     $ua->timeout(TIMEOUT);
+    $ua->env_proxy;
     
     eval {#bug workaround for https: see https://rt.cpan.org/Public/Bug/Display.html?id=3316
         local $SIG{ALRM} = sub { die "500 Can't connect to the host (timeout)\n" };
