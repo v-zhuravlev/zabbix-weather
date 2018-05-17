@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.0</version>
-    <date>2018-05-16T22:38:19Z</date>
+    <date>2018-05-17T06:30:56Z</date>
     <groups>
         <group>
-            <name>Templates</name>
+            <name>Templates/Applications</name>
         </group>
     </groups>
     <templates>
         <template>
-            <template>Template Weather</template>
-            <name>Template Weather</name>
-            <description>Template v0.1</description>
+            <template>Template App OpenWeatherMap weather</template>
+            <name>Template App OpenWeatherMap weather</name>
+            <description>https://github.com/v-zhuravlev/zabbix-weather</description>
             <groups>
                 <group>
-                    <name>Templates</name>
+                    <name>Templates/Applications</name>
                 </group>
             </groups>
             <applications>
@@ -705,6 +705,10 @@ See https://openweathermap.org/weather-conditions for mappings.&#13;
             <httptests/>
             <macros>
                 <macro>
+                    <macro>{$WEATHER_APIKEY}</macro>
+                    <value>your openweathermap key here</value>
+                </macro>
+                <macro>
                     <macro>{$WEATHER_LANG}</macro>
                     <value>en</value>
                 </macro>
@@ -715,7 +719,7 @@ See https://openweathermap.org/weather-conditions for mappings.&#13;
     </templates>
     <triggers>
         <trigger>
-            <expression>{Template Weather:get_weather.http_code.last()}&lt;&gt;200 or {Template Weather:get_weather.http_code.nodata(30m)}=1</expression>
+            <expression>{Template App OpenWeatherMap weather:get_weather.http_code.last()}&lt;&gt;200 or {Template App OpenWeatherMap weather:get_weather.http_code.nodata(30m)}=1</expression>
             <recovery_mode>0</recovery_mode>
             <recovery_expression/>
             <name>Issues with getting weather data</name>
@@ -724,11 +728,11 @@ See https://openweathermap.org/weather-conditions for mappings.&#13;
             <url/>
             <status>0</status>
             <priority>2</priority>
-            <description>Please check openweathermap API response.&#13;
-&#13;
-Check that $LAT and $LON user macro are set on the host level.&#13;
-&#13;
-If getting 401 HTTP response then check that $WEATHER_APIKEY is properly set globally or on the template level.</description>
+            <description>Suggestions:&#13;
+- Please check openweathermap API response in Latest data for item 'Get weather''&#13;
+- Check that $LAT and $LON user macro are set on the host level.&#13;
+- If getting 401 HTTP response then check that $WEATHER_APIKEY is properly on the template level.&#13;
+- If you need to use HTTP proxy, navigate to master item 'Get weather' and setup HTTP proxy there.</description>
             <type>0</type>
             <manual_close>1</manual_close>
             <dependencies/>
