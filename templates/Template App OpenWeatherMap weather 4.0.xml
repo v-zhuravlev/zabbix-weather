@@ -62,7 +62,7 @@
                     <logtimefmt/>
                     <preprocessing/>
                     <jmx_endpoint/>
-                    <timeout>3s</timeout>
+                    <timeout>10s</timeout>
                     <url>http://api.openweathermap.org/data/2.5/weather</url>
                     <query_fields>
                         <query_field>
