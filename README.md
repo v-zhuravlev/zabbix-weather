@@ -5,7 +5,33 @@ Collect weather conditions from openweathermap.org using host coordinates and Za
 ## Get key from openweathermap  
 http://openweathermap.org/appid  
 
+## Template  
+1. Import sample template for Zabbix 2.4-3.4 or for for Zabbix 4.0.  
 
+Currently supported items:  
+
+| Item       |       key |        via script(Zabbix 2.4+) |     via HTTP agent(Zabbix 4.0+) |  
+|------------|-----------|------------|------------|  
+| Temperature | temp | Y | Y |  
+|Humidity|humidity|Y|Y|  
+|Visibility|visibility|Y|Y|  
+|Is dark|is_dark|Y|N|  
+|Wind speed|wind.speed|Y|Y|  
+|Weather status|weather|Y|Y|  
+|Weather description|weather.description|Y|Y|  
+|Weather condition id |weather.condition.id|Y|Y|  
+
+
+
+2.	Add template level Macro
+`{$WEATHER_APIKEY} = YOURKEY`  
+add another global macro as prefered language for weather descriptions:  
+`{$WEATHER_LANG} = en`  
+
+
+## Setup hosts    
+Add macros {$LAT} and {$LON} for each host that requires weather monitoring:  
+![image](https://cloud.githubusercontent.com/assets/14870891/21159303/c87f61a2-c191-11e6-8f49-638d877b06a6.png)
 
 ## Install the script(optional for Zabbix 4.0+)
 For Zabbix 2.4-3.4, please read below how to setup the collector script.
@@ -36,40 +62,11 @@ export http_proxy=http://proxy_ip:3129/
 export https_proxy=$http_proxy  
 ./get_weather.pl -lat 55.672944 -lon 38.478944 --hostname TEST --api_key YOURKEY  
 ```
-
-## Setup the template
-1. Import sample template for Zabbix 2.4-3.4 or for for Zabbix 4.0.  
-
-Currently supported items:  
-
-| Item       |       key |        via script(Zabbix 2.4+) |     via HTTP agent(Zabbix 4.0+) |  
-|------------|-----------|------------|------------|  
-| Temperature | temp | Y | Y |  
-|Humidity|humidity|Y|Y|  
-|Visibility|visibility|Y|Y|  
-|Is dark|is_dark|Y|N|  
-|Wind speed|wind.speed|Y|Y|  
-|Weather status|weather|Y|Y|  
-|Weather description|weather.description|Y|Y|  
-|Weather condition id |weather.condition.id|Y|Y|  
-
-
-
-2.	Add global Macro(or add it on the template level)
-`{$WEATHER_APIKEY} = YOURKEY`  
-![image](https://cloud.githubusercontent.com/assets/14870891/21132462/354687f6-c125-11e6-9995-256aac0ebd89.png)
-add another global macro as prefered language for weather descriptions:  
-`{$WEATHER_LANG} = en`  
-
-
-## Setup host  
-Add macros {$LAT} and {$LON} for each host that require weather monitoring:  
-![image](https://cloud.githubusercontent.com/assets/14870891/21159303/c87f61a2-c191-11e6-8f49-638d877b06a6.png)
-
+## Demo  
 And that is it:  
 ![screencapture--1481663617632](https://cloud.githubusercontent.com/assets/14870891/21159567/c8e270de-c192-11e6-9452-cf1ed5251f60.png)
 
-
+## More  
 Note: It would more logical to use Latitue and Longitude Inventory fields and not user macros, but {INVENTORY.*} values cannot be used in items keys.  
 A feature request to change that is here: https://support.zabbix.com/browse/ZBXNEXT-2546.
 
