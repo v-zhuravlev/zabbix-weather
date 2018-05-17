@@ -23,7 +23,7 @@ Currently supported items:
 
 
 
-2.	Add template level Macro
+2.	Add template level Macro  
 `{$WEATHER_APIKEY} = YOURKEY`  
 add another global macro as prefered language for weather descriptions:  
 `{$WEATHER_LANG} = en`  
@@ -34,7 +34,7 @@ Add macros {$LAT} and {$LON} for each host that requires weather monitoring:
 ![image](https://cloud.githubusercontent.com/assets/14870891/21159303/c87f61a2-c191-11e6-8f49-638d877b06a6.png)
 
 ## Install the script(optional for Zabbix 4.0+)
-For Zabbix 2.4-3.4, please read below how to setup the collector script.
+For Zabbix 2.4-3.4, please read below how to setup the collector script.  
 0. Dependencies  
 The script is written in Perl and you will need common modules in order to run it:  
 ```
