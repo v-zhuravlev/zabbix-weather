@@ -185,6 +185,7 @@ sub zabbix_send {
       sprintf
       "<req>\n<host>%s</host>\n<key>%s</key>\n<data>%s</data>\n</req>\n",
       encode_base64($hostname), encode_base64($item), encode_base64(encode('utf8',$data));
+    my $packet = "ZBXD\1" . pack('V', length($request)) . "\0\0\0\0" . $request;
 
     my $sock = IO::Socket::INET->new(
         PeerAddr => $zabbixserver,
@@ -194,7 +195,7 @@ sub zabbix_send {
     );
 
     die "Could not create socket: $ERRNO\n" unless $sock;
-    $sock->send($request);
+    $sock->send($packet);
     my @handles = IO::Select->new($sock)->can_read($SOCK_TIMEOUT);
     if ( $debug > 0 ) { print "item - $item, data - $data\n"; }
 
