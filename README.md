@@ -1,29 +1,29 @@
 # zabbix-weather
-Collect weather conditions from openweathermap.org using host coordinates and Zabbix built-in HTTP agent (Zabbix 4.0) or perl script(Zabbix <4.0).  
+Collect weather conditions from openweathermap.org using host coordinates and Zabbix built-in HTTP agent + some JS preprocessing (Zabbix 4.2), HTTP agent only ( Zabbix 4.0 ) or perl script(Zabbix < 4.0).  
 
 
 ## Get key from openweathermap  
 http://openweathermap.org/appid  
 
 ## Template  
-1. Import sample template for Zabbix 2.4-3.4 or for for Zabbix 4.0.  
+1. Import sample template for Zabbix 2.4-3.4 or for Zabbix 4.2, 4.0.  
 
 Currently supported items:  
 
-| Item       |       key |        via script(Zabbix 2.4+) |     via HTTP agent(Zabbix 4.0+) |  
-|------------|-----------|------------|------------|  
-| Temperature | temp | Y | Y |  
-|Humidity|humidity|Y|Y|  
-|Visibility|visibility|Y|Y|  
-|Is dark|is_dark|Y|N|  
-|Wind speed|wind.speed|Y|Y|  
-|Weather status|weather|Y|Y|  
-|Weather description|weather.description|Y|Y|  
-|Weather condition id |weather.condition.id|Y|Y|  
+| Item       |       key |        via script(Zabbix 2.4+) |     via HTTP agent(Zabbix 4.0) |  via HTTP agent+JS* (Zabbix 4.2+) |
+|------------|-----------|------------|------------|-----|  
+| Temperature | temp | Y | Y | Y|  
+|Humidity|humidity|Y|Y|Y|  
+|Visibility|visibility|Y|Y|Y|  
+|Is dark|is_dark|Y|N|Y*|  
+|Wind speed|wind.speed|Y|Y|Y|  
+|Weather status|weather|Y|Y|Y|  
+|Weather description|weather.description|Y|Y|Y|  
+|Weather condition id |weather.condition.id|Y|Y|Y|  
 
 
 
-2.	Add template level Macro  
+2.	Add global/template level Macro  
 `{$WEATHER_APIKEY} = YOURKEY`  
 add another global macro as prefered language for weather descriptions:  
 `{$WEATHER_LANG} = en`  
@@ -33,7 +33,7 @@ add another global macro as prefered language for weather descriptions:
 Add macros {$LAT} and {$LON} for each host that requires weather monitoring:  
 ![image](https://cloud.githubusercontent.com/assets/14870891/21159303/c87f61a2-c191-11e6-8f49-638d877b06a6.png)
 
-## Install the script(optional for Zabbix 4.0+)
+## Install the script(only for Zabbix < 4.0)
 For Zabbix 2.4-3.4, please read below how to setup the collector script.  
 0. Dependencies  
 The script is written in Perl and you will need common modules in order to run it:  
