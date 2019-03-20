@@ -66,6 +66,9 @@ export https_proxy=$http_proxy
 And that is it:  
 ![screencapture--1481663617632](https://cloud.githubusercontent.com/assets/14870891/21159567/c8e270de-c192-11e6-9452-cf1ed5251f60.png)
 
+![image](https://user-images.githubusercontent.com/14870891/54673763-0067bc80-4b0c-11e9-9a90-7bfcaea8beeb.png)
+
+
 ## More  
 Note: It would more logical to use Latitue and Longitude Inventory fields and not user macros, but {INVENTORY.*} values cannot be used in items keys.  
 A feature request to change that is here: https://support.zabbix.com/browse/ZBXNEXT-2546.
