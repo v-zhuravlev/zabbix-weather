@@ -402,7 +402,7 @@
                     <preprocessing>
                         <step>
                             <type>12</type>
-                            <params>$.body.visibilitiy</params>
+                            <params>$.body.visibility</params>
                         </step>
                     </preprocessing>
                     <jmx_endpoint/>
