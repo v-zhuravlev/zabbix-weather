@@ -1,0 +1,953 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>6.0</version>
+    <date>2022-05-15T19:41:55Z</date>
+    <groups>
+        <group>
+            <uuid>a571c0d144b14fd4a87a9d9b2aa9fcd6</uuid>
+            <name>Templates/Applications</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <uuid>102c92acc69545ef88c334c9a25708c8</uuid>
+            <template>Template App OpenWeatherMap weather</template>
+            <name>Template App OpenWeatherMap weather</name>
+            <description>https://github.com/v-zhuravlev/zabbix-weather</description>
+            <groups>
+                <group>
+                    <name>Templates/Applications</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <uuid>95f088e264dc4a6893decdd96446f64d</uuid>
+                    <name>Get weather</name>
+                    <type>HTTP_AGENT</type>
+                    <key>get_weather.http</key>
+                    <delay>10m</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <timeout>10s</timeout>
+                    <url>http://api.openweathermap.org/data/2.5/weather</url>
+                    <query_fields>
+                        <query_field>
+                            <name>units</name>
+                            <value>metric</value>
+                        </query_field>
+                        <query_field>
+                            <name>lat</name>
+                            <value>{$LAT}</value>
+                        </query_field>
+                        <query_field>
+                            <name>lon</name>
+                            <value>{$LON}</value>
+                        </query_field>
+                        <query_field>
+                            <name>APPID</name>
+                            <value>{$WEATHER_APIKEY}</value>
+                        </query_field>
+                        <query_field>
+                            <name>lang</name>
+                            <value>{$WEATHER_LANG}</value>
+                        </query_field>
+                    </query_fields>
+                    <output_format>JSON</output_format>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Weather</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>c88e52010c154f53b00912e0ba0a011c</uuid>
+                    <name>Get weather HTTP response code</name>
+                    <type>DEPENDENT</type>
+                    <key>get_weather.http_code</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <valuemap>
+                        <name>HTTP response status code</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.cod</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>get_weather.http</key>
+                    </master_item>
+                    <request_method>POST</request_method>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Weather</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>9b5fbeda3a424433a66a9ec92107f823</uuid>
+                            <expression>last(/Template App OpenWeatherMap weather/get_weather.http_code)&lt;&gt;200 or nodata(/Template App OpenWeatherMap weather/get_weather.http_code,30m)=1</expression>
+                            <name>Issues with getting weather data</name>
+                            <priority>WARNING</priority>
+                            <description>Suggestions:
+- Please check openweathermap API response in Latest data for item 'Get weather''
+- Check that $LAT and $LON user macro are set on the host level.
+- If getting 401 HTTP response then check that $WEATHER_APIKEY is properly on the template level.
+- If you need to use HTTP proxy, navigate to master item 'Get weather' and setup HTTP proxy there.</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>61faf82789a3473abca0da779f794a7e</uuid>
+                    <name>Humidity</name>
+                    <type>DEPENDENT</type>
+                    <key>humidity</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.main.humidity</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>get_weather.http</key>
+                    </master_item>
+                    <request_method>POST</request_method>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Weather</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>5610ed8c8f0949509b6b3fcf81e9a159</uuid>
+                    <name>Is dark</name>
+                    <type>DEPENDENT</type>
+                    <key>is_dark</key>
+                    <delay>0</delay>
+                    <valuemap>
+                        <name>Weather is dark status</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>json_value = JSON.parse(value);
+sunrise = json_value ['body']['sys']['sunrise'];
+sunset = json_value['body']['sys']['sunset'];
+dt = json_value['body']['dt']; //time of calculation
+
+if(dt &gt; sunrise &amp;&amp; dt &lt; sunset) {
+    return 0; // DAY
+}
+else if(dt &lt; sunrise || dt &gt; sunset){
+    return 1; // NIGHT
+}
+else {
+    return &quot;ZBX_NOTSUPPORTED&quot;;
+}</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>get_weather.http</key>
+                    </master_item>
+                    <request_method>POST</request_method>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Weather</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>9adce5782b4d4978aa227b59b23d62d8</uuid>
+                    <name>Temperature</name>
+                    <type>DEPENDENT</type>
+                    <key>temp</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>C</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.main.temp</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>get_weather.http</key>
+                    </master_item>
+                    <request_method>POST</request_method>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Weather</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>b2c070ee430e4d0daf9b261f86537caa</uuid>
+                    <name>Visibility</name>
+                    <type>DEPENDENT</type>
+                    <key>visibility</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>m</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.visibility</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>get_weather.http</key>
+                    </master_item>
+                    <request_method>POST</request_method>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Weather</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>82f4d65c351b469a960c1ba9fe267e97</uuid>
+                    <name>Weather</name>
+                    <type>DEPENDENT</type>
+                    <key>weather</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.weather[0].main</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>get_weather.http</key>
+                    </master_item>
+                    <request_method>POST</request_method>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Weather</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>ca68ac6795b14f86a1617b8964d0834e</uuid>
+                    <name>Weather condition id</name>
+                    <type>DEPENDENT</type>
+                    <key>weather.condition.id</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <description>Can be used to assign icons. 
+See https://openweathermap.org/weather-conditions for mappings.
+2xx - Thunderstorm
+3xx - Drizzle
+5xx - Rain
+6xx - Snow
+7xx - Atmosphere
+800 - Clear
+80x - Clouds</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.weather[0].id</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>get_weather.http</key>
+                    </master_item>
+                    <request_method>POST</request_method>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Weather</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>29cf81df382149f2bb376e88f3871ff6</uuid>
+                    <name>Weather description</name>
+                    <type>DEPENDENT</type>
+                    <key>weather.description</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.weather[0].description</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>get_weather.http</key>
+                    </master_item>
+                    <request_method>POST</request_method>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Weather</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>17387cc63a66473a948d262991d16f25</uuid>
+                    <name>Wind speed</name>
+                    <type>DEPENDENT</type>
+                    <key>wind.speed</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>m/s</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.wind.speed</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>get_weather.http</key>
+                    </master_item>
+                    <request_method>POST</request_method>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Weather</value>
+                        </tag>
+                    </tags>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$LAT}</macro>
+                    <value>host latitude (overwrite on host level)</value>
+                </macro>
+                <macro>
+                    <macro>{$LON}</macro>
+                    <value>host longitude (overwrite on host level)</value>
+                </macro>
+                <macro>
+                    <macro>{$WEATHER_APIKEY}</macro>
+                    <value>your api key here</value>
+                </macro>
+                <macro>
+                    <macro>{$WEATHER_LANG}</macro>
+                    <value>en</value>
+                </macro>
+            </macros>
+            <dashboards>
+                <dashboard>
+                    <uuid>01d660bb6fad41e7b9145703d6b4ebd1</uuid>
+                    <name>Template App OpenWeatherMap weather</name>
+                    <display_period>3600</display_period>
+                    <pages>
+                        <page>
+                            <widgets>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <name>Temperature</name>
+                                                <host>Template App OpenWeatherMap weather</host>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <x>12</x>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <name>Humidity</name>
+                                                <host>Template App OpenWeatherMap weather</host>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <y>5</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <name>Wind speed</name>
+                                                <host>Template App OpenWeatherMap weather</host>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <x>12</x>
+                                    <y>5</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <name>Visibility</name>
+                                                <host>Template App OpenWeatherMap weather</host>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <y>10</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <name>Is dark</name>
+                                                <host>Template App OpenWeatherMap weather</host>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <x>12</x>
+                                    <y>10</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <name>Weather condition id</name>
+                                                <host>Template App OpenWeatherMap weather</host>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <y>15</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <name>HTTP response code</name>
+                                                <host>Template App OpenWeatherMap weather</host>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>PLAIN_TEXT</type>
+                                    <name>Description</name>
+                                    <x>12</x>
+                                    <y>15</y>
+                                    <width>6</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>ITEM</type>
+                                            <name>itemids</name>
+                                            <value>
+                                                <key>weather.description</key>
+                                                <host>Template App OpenWeatherMap weather</host>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>PLAIN_TEXT</type>
+                                    <name>Weather</name>
+                                    <x>18</x>
+                                    <y>15</y>
+                                    <width>6</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>ITEM</type>
+                                            <name>itemids</name>
+                                            <value>
+                                                <key>weather</key>
+                                                <host>Template App OpenWeatherMap weather</host>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                            </widgets>
+                        </page>
+                    </pages>
+                </dashboard>
+            </dashboards>
+            <valuemaps>
+                <valuemap>
+                    <uuid>b8ebe5f0efa341759872a01752e9b2c7</uuid>
+                    <name>HTTP response status code</name>
+                    <mappings>
+                        <mapping>
+                            <value>100</value>
+                            <newvalue>Continue</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>101</value>
+                            <newvalue>Switching Protocols</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>102</value>
+                            <newvalue>Processing</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>200</value>
+                            <newvalue>OK</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>201</value>
+                            <newvalue>Created</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>202</value>
+                            <newvalue>Accepted</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>203</value>
+                            <newvalue>Non-Authoritative Information</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>204</value>
+                            <newvalue>No Content</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>205</value>
+                            <newvalue>Reset Content</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>206</value>
+                            <newvalue>Partial Content</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>207</value>
+                            <newvalue>Multi-Status</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>208</value>
+                            <newvalue>Already Reported</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>226</value>
+                            <newvalue>IM Used</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>300</value>
+                            <newvalue>Multiple Choices</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>301</value>
+                            <newvalue>Moved Permanently</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>302</value>
+                            <newvalue>Found</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>303</value>
+                            <newvalue>See Other</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>304</value>
+                            <newvalue>Not Modified</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>305</value>
+                            <newvalue>Use Proxy</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>306</value>
+                            <newvalue>Switch Proxy</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>307</value>
+                            <newvalue>Temporary Redirect</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>308</value>
+                            <newvalue>Permanent Redirect/Resume Incomplete</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>400</value>
+                            <newvalue>Bad Request</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>401</value>
+                            <newvalue>Unauthorized</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>402</value>
+                            <newvalue>Payment Required</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>403</value>
+                            <newvalue>Forbidden</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>404</value>
+                            <newvalue>Not Found</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>405</value>
+                            <newvalue>Method Not Allowed</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>406</value>
+                            <newvalue>Not Acceptable</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>407</value>
+                            <newvalue>Proxy Authentication Required</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>408</value>
+                            <newvalue>Request Timeout</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>409</value>
+                            <newvalue>Conflict</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>410</value>
+                            <newvalue>Gone</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>411</value>
+                            <newvalue>Length Required</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>412</value>
+                            <newvalue>Precondition Failed</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>413</value>
+                            <newvalue>Payload Too Large</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>414</value>
+                            <newvalue>Request-URI Too Long</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>415</value>
+                            <newvalue>Unsupported Media Type</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>416</value>
+                            <newvalue>Requested Range Not Satisfiable</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>417</value>
+                            <newvalue>Expectation Failed</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>418</value>
+                            <newvalue>I'm a Teapot</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>419</value>
+                            <newvalue>Authentication Timeout</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>420</value>
+                            <newvalue>Method Failure/Enhance Your Calm</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>421</value>
+                            <newvalue>Misdirected Request</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>422</value>
+                            <newvalue>Unprocessable Entity</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>423</value>
+                            <newvalue>Locked</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>424</value>
+                            <newvalue>Failed Dependency</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>426</value>
+                            <newvalue>Upgrade Required</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>428</value>
+                            <newvalue>Precondition Required</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>429</value>
+                            <newvalue>Too Many Requests</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>431</value>
+                            <newvalue>Request Header Fields Too Large</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>440</value>
+                            <newvalue>Login Timeout</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>444</value>
+                            <newvalue>No Response</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>449</value>
+                            <newvalue>Retry With</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>450</value>
+                            <newvalue>Blocked by Windows Parental Controls</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>451</value>
+                            <newvalue>Unavailable for Legal Reasons/Redirect</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>494</value>
+                            <newvalue>Request Header Too Large</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>495</value>
+                            <newvalue>Cert Error</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>496</value>
+                            <newvalue>No Cert</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>497</value>
+                            <newvalue>HTTP to HTTPS</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>498</value>
+                            <newvalue>Token Expired/Invalid</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>499</value>
+                            <newvalue>Client Closed Request/Token Required</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>500</value>
+                            <newvalue>Internal Server Error</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>501</value>
+                            <newvalue>Not Implemented</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>502</value>
+                            <newvalue>Bad Gateway</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>503</value>
+                            <newvalue>Service Unavailable</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>504</value>
+                            <newvalue>Gateway Timeout</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>505</value>
+                            <newvalue>HTTP Version Not Supported</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>506</value>
+                            <newvalue>Variant Also Negotiates</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>507</value>
+                            <newvalue>Insufficient Storage</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>508</value>
+                            <newvalue>Loop Detected</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>509</value>
+                            <newvalue>Bandwidth Limit Exceeded</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>510</value>
+                            <newvalue>Not Extended</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>511</value>
+                            <newvalue>Network Authentication Required</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>520</value>
+                            <newvalue>Unknown Error</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>598</value>
+                            <newvalue>Network Read Timeout Error</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>599</value>
+                            <newvalue>Network Connect Timeout Error</newvalue>
+                        </mapping>
+                    </mappings>
+                </valuemap>
+                <valuemap>
+                    <uuid>4f3670d22df6415e9ea549a59f1f40a9</uuid>
+                    <name>Weather is dark status</name>
+                    <mappings>
+                        <mapping>
+                            <value>0</value>
+                            <newvalue>day</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>1</value>
+                            <newvalue>night</newvalue>
+                        </mapping>
+                    </mappings>
+                </valuemap>
+            </valuemaps>
+        </template>
+    </templates>
+    <graphs>
+        <graph>
+            <uuid>7f36017692db4ba4934ffffcfd162d3a</uuid>
+            <name>HTTP response code</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App OpenWeatherMap weather</host>
+                        <key>get_weather.http_code</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>8b26ed2751b54b1fbbd3ab3b0631b0b2</uuid>
+            <name>Humidity</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App OpenWeatherMap weather</host>
+                        <key>humidity</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>a0bb076c65ea41b3b34930bdb61f486c</uuid>
+            <name>Is dark</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App OpenWeatherMap weather</host>
+                        <key>is_dark</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>896cb978367c412e8788a89e8ff9b88d</uuid>
+            <name>Temperature</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App OpenWeatherMap weather</host>
+                        <key>temp</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>5380598407284ab981503200af308c99</uuid>
+            <name>Visibility</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App OpenWeatherMap weather</host>
+                        <key>visibility</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>37deda9ef70a4a6f8718ba536efc0a30</uuid>
+            <name>Weather condition id</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App OpenWeatherMap weather</host>
+                        <key>weather.condition.id</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>09555b14e6fa458ca42b4cf678a7ce37</uuid>
+            <name>Wind speed</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App OpenWeatherMap weather</host>
+                        <key>wind.speed</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+</zabbix_export>
